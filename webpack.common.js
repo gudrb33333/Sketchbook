@@ -5,7 +5,7 @@ module.exports = {
         app: './src/ts/sketchbook.ts'
     },
     output: {
-        filename: './build/sketchbook.min.js',
+        filename: './build/main.js',
         library: 'Sketchbook',
         libraryTarget: 'umd',
         path: path.resolve(__dirname)

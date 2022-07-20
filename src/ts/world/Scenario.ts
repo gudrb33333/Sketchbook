@@ -114,7 +114,7 @@ export class Scenario
 			loadingManager.createWelcomeScreenCallback(this);
 
 			world.cameraOperator.theta = this.initialCameraAngle;
-			world.cameraOperator.phi = 15;
+			world.cameraOperator.phi = 30;
 		}
 	}
 }

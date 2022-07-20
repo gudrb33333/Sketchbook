@@ -37,9 +37,9 @@ export class CapsuleCollider implements ICollider
 		capsuleBody.material = mat;
 		// sphereShape.material = mat;
 
-		capsuleBody.addShape(sphereShape, new CANNON.Vec3(0, 0, 0));
-		capsuleBody.addShape(sphereShape, new CANNON.Vec3(0, options.height / 2, 0));
-		capsuleBody.addShape(sphereShape, new CANNON.Vec3(0, -options.height / 2, 0));
+		capsuleBody.addShape(sphereShape, new CANNON.Vec3(0, 0.4, 0));
+		capsuleBody.addShape(sphereShape, new CANNON.Vec3(0, (options.height / 2) + 0.4, 0));
+		capsuleBody.addShape(sphereShape, new CANNON.Vec3(0, (-options.height / 2) + 0.4, 0));
 
 		this.body = capsuleBody;
 	}

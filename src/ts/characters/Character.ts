@@ -127,8 +127,8 @@ export class Character extends THREE.Object3D implements IWorldEntity
 		this.characterCapsule = new CapsuleCollider({
 			mass: 1,
 			position: new CANNON.Vec3(),
-			height: 0.5,
-			radius: 0.25,
+			height: 1,
+			radius: 0.3,
 			segments: 8,
 			friction: 0.0
 		});
@@ -444,7 +444,7 @@ export class Character extends THREE.Object3D implements IWorldEntity
 			return;
 		}
 
-		this.world.cameraOperator.setRadius(1.6, true);
+		this.world.cameraOperator.setRadius(2, true);
 		this.world.cameraOperator.followMode = false;
 		// this.world.dirLight.target = this;
 

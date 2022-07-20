@@ -90,7 +90,6 @@ export class CameraOperator implements IInputReceiver, IUpdatable
 		if (this.followMode === true)
 		{
 			this.camera.position.y = THREE.MathUtils.clamp(this.camera.position.y, this.target.y, Number.POSITIVE_INFINITY);
-			this.camera.lookAt(this.target);
 			let newPos = this.target.clone().add(new THREE.Vector3().subVectors(this.camera.position, this.target).normalize().multiplyScalar(this.targetRadius));
 			this.camera.position.x = newPos.x;
 			this.camera.position.y = newPos.y;
@@ -98,8 +97,8 @@ export class CameraOperator implements IInputReceiver, IUpdatable
 		}
 		else 
 		{
+			this.target.y += 0.8
 			this.radius = THREE.MathUtils.lerp(this.radius, this.targetRadius, 0.1);
-	
 			this.camera.position.x = this.target.x + this.radius * Math.sin(this.theta * Math.PI / 180) * Math.cos(this.phi * Math.PI / 180);
 			this.camera.position.y = this.target.y + this.radius * Math.sin(this.phi * Math.PI / 180);
 			this.camera.position.z = this.target.z + this.radius * Math.cos(this.theta * Math.PI / 180) * Math.cos(this.phi * Math.PI / 180);
