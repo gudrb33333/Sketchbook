@@ -498,6 +498,7 @@ export class Character extends THREE.Object3D implements IWorldEntity
 
 	public setAnimation(clipName: string, fadeIn: number): number
 	{
+		console.log(clipName)
 		if (this.mixer !== undefined)
 		{
 			// gltf
