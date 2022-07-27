@@ -80,6 +80,8 @@ export class Character extends THREE.Object3D implements IWorldEntity
 	public occupyingSeat: VehicleSeat = null;
 	public vehicleEntryInstance: VehicleEntryInstance = null;
 	
+	public sessionId: string;
+
 	private physicsEnabled: boolean = true;
 
 	constructor(gltf: any)
@@ -498,7 +500,7 @@ export class Character extends THREE.Object3D implements IWorldEntity
 
 	public setAnimation(clipName: string, fadeIn: number): number
 	{
-		console.log(clipName)
+
 		if (this.mixer !== undefined)
 		{
 			// gltf
@@ -515,6 +517,29 @@ export class Character extends THREE.Object3D implements IWorldEntity
 			action.fadeIn(fadeIn);
 			action.play();
 
+			return action.getClip().duration;
+		}
+	}
+
+	public setAnimation2(clipName: string, fadeIn: number): number
+	{
+		if (this.mixer !== undefined)
+		{
+			// gltf
+			let clip = THREE.AnimationClip.findByName( this.animations, clipName );
+
+			let action:THREE.AnimationAction = this.mixer.clipAction(clip);
+			if (action === null)
+			{
+				console.error(`Animation ${clipName} not found!`);
+				return 0;
+			}
+			console.log(action.isRunning())
+			if(!action.isRunning()){
+			this.mixer.stopAllAction();
+			action.fadeIn(fadeIn);
+			action.play();
+			}
 			return action.getClip().duration;
 		}
 	}
@@ -584,8 +609,8 @@ export class Character extends THREE.Object3D implements IWorldEntity
 	public rotateModel(): void
 	{
 		this.lookAt(this.position.x + this.orientation.x, this.position.y + this.orientation.y, this.position.z + this.orientation.z);
-		this.tiltContainer.rotation.z = (-this.angularVelocity * 2.3 * this.velocity.length());
-		this.tiltContainer.position.setY((Math.cos(Math.abs(this.angularVelocity * 2.3 * this.velocity.length())) / 2) - 0.5);
+		//this.tiltContainer.rotation.z = (-this.angularVelocity * 2.3 * this.velocity.length());
+		//this.tiltContainer.position.setY((Math.cos(Math.abs(this.angularVelocity * 2.3 * this.velocity.length())) / 2) - 0.5);
 	}
 
 	public jump(initJumpSpeed: number = -1): void
