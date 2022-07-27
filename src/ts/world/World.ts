@@ -79,7 +79,7 @@ export class World
 	private myCharacter: Character = null;
 	public characterMap = new Map<string, Character>()
 	public AnimationMap = new Map<string, Array<any>>()
-	private idleState: boolean = true
+	private idleState: number = 0
 
 	constructor(worldScenePath?: any)
 	{
@@ -388,7 +388,7 @@ export class World
 		this.renderDelta = this.clock.getDelta();
 
 			
-			if(this.myCharacter != null && this.myCharacter.charState.constructor.name ==='Idle' && !this.idleState){
+			if(this.myCharacter != null && this.myCharacter.charState.constructor.name ==='Idle' && this.idleState < 61){
 				this.channel.push("naf", { 
 					"sessionId" : this.myCharacter.sessionId,
 					"positionX" : this.myCharacter.position.x,
@@ -399,7 +399,8 @@ export class World
 					"orientationY" : this.myCharacter.orientation.y,
 					"orientationZ" : this.myCharacter.orientation.z,
 				})
-				this.idleState = true
+				this.idleState ++;
+				console.log("idleState:",this.idleState)
 			}else if(this.myCharacter != null && this.myCharacter.charState.constructor.name !='Idle'){
 				this.channel.push("naf", { 
 					"sessionId" : this.myCharacter.sessionId,
@@ -411,7 +412,8 @@ export class World
 					"orientationY" : this.myCharacter.orientation.y,
 					"orientationZ" : this.myCharacter.orientation.z,
 				})
-				this.idleState = false
+				this.idleState = 0
+				console.log("idleState:",this.idleState)
 			}
 	}
 
