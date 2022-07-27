@@ -32,6 +32,10 @@ import { Scenario } from './Scenario';
 import { Sky } from './Sky';
 import { Ocean } from './Ocean';
 
+import { Socket, Channel, Presence } from 'phoenix'; 
+import { Vector3 } from 'three';
+import { CharacterSpawnPoint } from './CharacterSpawnPoint';
+
 export class World
 {
 	public renderer: THREE.WebGLRenderer;
@@ -65,6 +69,17 @@ export class World
 	public updatables: IUpdatable[] = [];
 
 	private lastScenarioID: string;
+	private socket: Socket;
+	private channel: Channel;
+	private socketPushTime: number = 1;
+	private afterPosition: Vector3;
+	private beforePosition: Vector3;
+	private presence: Presence;
+	private sessionId: string;
+	private myCharacter: Character = null;
+	public characterMap = new Map<string, Character>()
+	public AnimationMap = new Map<string, Array<any>>()
+	private idleState: boolean = true
 
 	constructor(worldScenePath?: any)
 	{
@@ -147,6 +162,18 @@ export class World
 		// Create right panel GUI
 		this.createParamsGUI(scope);
 
+		//AnimationMap Initialization
+		this.AnimationMap.set("Idle",["idle", 0.1])
+		this.AnimationMap.set("DropIdle",["drop_idle", 0.1])
+		this.AnimationMap.set("DropRolling",["drop_running_roll", 0.03])
+		this.AnimationMap.set("DropRunning",["drop_running", 0.1])
+		this.AnimationMap.set("EndWalk",["stop", 0.1])
+		this.AnimationMap.set("Falling",["falling", 0.3])
+		this.AnimationMap.set("JumpIdle",["jump_idle", 0.1])
+		this.AnimationMap.set("JumpRunning",["jump_running", 0.03])
+		this.AnimationMap.set("Sprint",["sprint", 0.1])
+		this.AnimationMap.set("Walk",["run", 0.1])
+
 		// Initialization
 		this.inputManager = new InputManager(this, this.renderer.domElement);
 		this.cameraOperator = new CameraOperator(this, this.camera, this.params.Mouse_Sensitivity);
@@ -156,6 +183,7 @@ export class World
 		if (worldScenePath !== undefined)
 		{
 			let loadingManager = new LoadingManager(this);
+			let loadingManager2 = new LoadingManager(this);
 			loadingManager.onFinishedCallback = () =>
 			{
 				this.update(1, 1);
@@ -171,6 +199,66 @@ export class World
 						UIManager.setUserInterfaceVisible(true);
 					}
 				});
+
+				const profile = {
+					avatarIdPath: "build/assets/female/readyFemale.glb",
+					avatarName: "TEST"
+				}
+
+				this.socket = new Socket("ws://localhost:4000/socket")		
+				
+
+				this.channel = this.socket.channel("hub:42232", {"profile" : profile})
+				this.presence = new Presence(this.channel)
+
+				this.presence.onJoin((id, beforeJoin, afterJoin) =>{
+					if (beforeJoin === undefined) {
+						console.log(id ,":", afterJoin.metas[0])
+						if(id != this.sessionId){
+							const characterSpawnPoint = new CharacterSpawnPoint(new THREE.Object3D)
+							characterSpawnPoint.spawnAvatar(loadingManager2 ,this, id)
+						}
+					}
+				})
+
+				this.presence.onLeave((id, remaining, afteremovedrJoin) =>{
+					let leaveCharacter:Character;
+					this.characters.forEach((character) => {
+						if(character.sessionId == id){
+							leaveCharacter = character
+							this.characterMap.delete(id)
+						}
+					});
+
+					this.remove(leaveCharacter)
+					//console.log("onLeave:id", id)
+					//console.log("onLeave:remaining", remaining)
+					//console.log("onLeave:afteremovedrJoin", afteremovedrJoin)
+				})
+
+
+				this.presence.onSync(() => {
+					this.presence.list((id, {metas: [first, ...rest]}) => {
+						console.log("onSync:",id)
+					})
+				})
+
+
+				this.socket.connect()
+				this.channel
+					.join()
+						.receive("ok", resp => { 
+							console.log("Joined successfully", resp)
+							this.sessionId = resp
+							this.characters[0].sessionId = this.sessionId
+							this.myCharacter = this.characters[0]
+							this.characterMap.set(this.sessionId, this.myCharacter)
+							this.channel.on("naf", this.handleIncomingNAF)
+							//console.log(this.myCharacter.charState.constructor.name.toLocaleLowerCase())
+							//this.myCharacter.setAnimation("idle", 0.1)
+						})
+						.receive("error", resp => { console.log("Unable to join", resp) })	
+
 			};
 			loadingManager.loadGLTF(worldScenePath, (gltf) =>
 				{
@@ -298,6 +386,33 @@ export class World
 
 		// Measuring render time
 		this.renderDelta = this.clock.getDelta();
+
+			
+			if(this.myCharacter != null && this.myCharacter.charState.constructor.name ==='Idle' && !this.idleState){
+				this.channel.push("naf", { 
+					"sessionId" : this.myCharacter.sessionId,
+					"positionX" : this.myCharacter.position.x,
+					"positionY" : this.myCharacter.position.y,
+					"positionZ" : this.myCharacter.position.z,
+					"animation" : this.myCharacter.charState.constructor.name,
+					"orientationX" : this.myCharacter.orientation.x,
+					"orientationY" : this.myCharacter.orientation.y,
+					"orientationZ" : this.myCharacter.orientation.z,
+				})
+				this.idleState = true
+			}else if(this.myCharacter != null && this.myCharacter.charState.constructor.name !='Idle'){
+				this.channel.push("naf", { 
+					"sessionId" : this.myCharacter.sessionId,
+					"positionX" : this.myCharacter.position.x,
+					"positionY" : this.myCharacter.position.y,
+					"positionZ" : this.myCharacter.position.z,
+					"animation" : this.myCharacter.charState.constructor.name,
+					"orientationX" : this.myCharacter.orientation.x,
+					"orientationY" : this.myCharacter.orientation.y,
+					"orientationZ" : this.myCharacter.orientation.z,
+				})
+				this.idleState = false
+			}
 	}
 
 	public setTimeScale(value: number): void
@@ -618,4 +733,17 @@ export class World
 
 		gui.open();
 	}
+
+	handleIncomingNAF = data => {
+		//console.log(data)
+		let moveCharacter: Character = this.characterMap.get(data.sessionId)
+		if(moveCharacter){
+			moveCharacter.setPosition(data.positionX, data.positionY, data.positionZ)
+			moveCharacter.setAnimation2(this.AnimationMap.get(data.animation)[0], this.AnimationMap.get(data.animation)[1])
+			moveCharacter.orientation.x = data.orientationX
+			moveCharacter.orientation.y = data.orientationY
+			moveCharacter.orientation.z = data.orientationZ
+			moveCharacter.setCameraRelativeOrientationTarget()
+		}
+	};
 }
