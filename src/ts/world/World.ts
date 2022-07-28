@@ -208,6 +208,7 @@ export class World
 				this.socket = new Socket("ws://localhost:4000/socket")		
 				
 
+				
 				this.channel = this.socket.channel("hub:42232", {"profile" : profile})
 				this.presence = new Presence(this.channel)
 
