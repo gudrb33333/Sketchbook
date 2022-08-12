@@ -6,6 +6,12 @@
 </head>
 
 <body>
+	<audio id="localAudio" autoplay class="audio" muted ></audio>
+	<video id="localWebcam" autoplay class="video" muted ></video>
+	<video id="localShare" autoplay class="video" muted ></video>
+	<div id="videoContainer"></div>
+	<!-- <audio id="localAudio" autoplay class="audio" muted ></video>
+	<div id="audioContainer"></div> -->
 	<script src="build/main.js"></script>
 	<script>
 		const world = new Sketchbook.World('build/assets/building_trimesh_final.glb');
