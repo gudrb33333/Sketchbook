@@ -289,7 +289,8 @@ export class World
 
 
 
-							const roomName = window.location.pathname.split('/')[2]
+							//const roomName = window.location.pathname.split('/')[2]
+							const roomName = 'abc'
 
 							//const socket = io("wss://hubs.local:3000/mediasoup")
 							const socket = io("wss://stream.meta-world.gudrb33333.click/mediasoup")
