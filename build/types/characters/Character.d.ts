@@ -57,7 +57,9 @@ export declare class Character extends THREE.Object3D implements IWorldEntity {
     controlledObject: IControllable;
     occupyingSeat: VehicleSeat;
     vehicleEntryInstance: VehicleEntryInstance;
+    sessionId: string;
     private physicsEnabled;
+    characterAnimationState: string;
     constructor(gltf: any);
     setAnimations(animations: []): void;
     setArcadeVelocityInfluence(x: number, y?: number, z?: number): void;
@@ -86,7 +88,9 @@ export declare class Character extends THREE.Object3D implements IWorldEntity {
     inputReceiverInit(): void;
     displayControls(): void;
     inputReceiverUpdate(timeStep: number): void;
+    setCharacterAnimationState(clipName: string): void;
     setAnimation(clipName: string, fadeIn: number): number;
+    setAnimation2(clipName: string, fadeIn: number): number;
     springMovement(timeStep: number): void;
     springRotation(timeStep: number): void;
     getLocalMovementDirection(): THREE.Vector3;

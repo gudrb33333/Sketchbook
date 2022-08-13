@@ -84,6 +84,8 @@ export class Character extends THREE.Object3D implements IWorldEntity
 
 	private physicsEnabled: boolean = true;
 
+	public characterAnimationState: string = null
+
 	constructor(gltf: any)
 	{
 		super();
@@ -498,6 +500,11 @@ export class Character extends THREE.Object3D implements IWorldEntity
 		
 	}
 
+	
+	public setCharacterAnimationState(clipName: string): void {
+		this.characterAnimationState = clipName
+	}
+
 	public setAnimation(clipName: string, fadeIn: number): number
 	{
 
@@ -505,6 +512,8 @@ export class Character extends THREE.Object3D implements IWorldEntity
 		{
 			// gltf
 			let clip = THREE.AnimationClip.findByName( this.animations, clipName );
+
+			this.setCharacterAnimationState(clipName)
 
 			let action = this.mixer.clipAction(clip);
 			if (action === null)

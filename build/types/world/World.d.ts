@@ -44,6 +44,17 @@ export declare class World {
     scenarioGUIFolder: any;
     updatables: IUpdatable[];
     private lastScenarioID;
+    private socket;
+    private channel;
+    private socketPushTime;
+    private afterPosition;
+    private beforePosition;
+    private presence;
+    private sessionId;
+    private myCharacter;
+    characterMap: Map<string, Character>;
+    AnimationMap: Map<string, any[]>;
+    private idleState;
     constructor(worldScenePath?: any);
     update(timeStep: number, unscaledTimeStep: number): void;
     updatePhysics(timeStep: number): void;
@@ -69,4 +80,5 @@ export declare class World {
     updateControls(controls: any): void;
     private generateHTML;
     private createParamsGUI;
+    handleIncomingNAF: (data: any) => void;
 }

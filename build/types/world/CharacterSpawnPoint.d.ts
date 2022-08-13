@@ -6,4 +6,5 @@ export declare class CharacterSpawnPoint implements ISpawnPoint {
     private object;
     constructor(object: THREE.Object3D);
     spawn(loadingManager: LoadingManager, world: World): void;
+    spawnAvatar(loadingManager: LoadingManager, world: World, sessionId: string): void;
 }

@@ -167,16 +167,16 @@ export class World
 		this.createParamsGUI(scope);
 
 		//AnimationMap Initialization
-		this.AnimationMap.set("Idle",["idle", 0.1])
-		this.AnimationMap.set("DropIdle",["drop_idle", 0.1])
-		this.AnimationMap.set("DropRolling",["drop_running_roll", 0.03])
-		this.AnimationMap.set("DropRunning",["drop_running", 0.1])
-		this.AnimationMap.set("EndWalk",["stop", 0.1])
-		this.AnimationMap.set("Falling",["falling", 0.3])
-		this.AnimationMap.set("JumpIdle",["jump_idle", 0.1])
-		this.AnimationMap.set("JumpRunning",["jump_running", 0.03])
-		this.AnimationMap.set("Sprint",["sprint", 0.1])
-		this.AnimationMap.set("Walk",["run", 0.1])
+		this.AnimationMap.set("idle",["idle", 0.1])
+		this.AnimationMap.set("drop_idle",["drop_idle", 0.1])
+		this.AnimationMap.set("drop_running_roll",["drop_running_roll", 0.03])
+		this.AnimationMap.set("drop_running",["drop_running", 0.1])
+		this.AnimationMap.set("stop",["stop", 0.1])
+		this.AnimationMap.set("falling",["falling", 0.3])
+		this.AnimationMap.set("jump_idle",["jump_idle", 0.1])
+		this.AnimationMap.set("jump_running",["jump_running", 0.03])
+		this.AnimationMap.set("sprint",["sprint", 0.1])
+		this.AnimationMap.set("run",["run", 0.1])
 
 		// Initialization
 		this.inputManager = new InputManager(this, this.renderer.domElement);
@@ -209,7 +209,7 @@ export class World
 					avatarName: "TEST"
 				}
 
-				//this.socket = new Socket("wss://hubs.local:4001/socket")		
+				//this.socket = new Socket("ws://hubs.local:4000/socket")		
 				this.socket = new Socket("wss://server.meta-world.gudrb33333.click/socket")
 
 				
@@ -287,7 +287,7 @@ export class World
 
 
 
-							
+
 
 							// const roomName = window.location.pathname.split('/')[2]
 
@@ -1077,28 +1077,27 @@ export class World
 
 		// Measuring render time
 		this.renderDelta = this.clock.getDelta();
-
 			
-			if(this.myCharacter != null && this.myCharacter.charState.constructor.name ==='Idle' && this.idleState < 61){
+			if(this.myCharacter != null && this.myCharacter.characterAnimationState ==='idle' && this.idleState < 61){
 				this.channel.push("naf", { 
 					"sessionId" : this.myCharacter.sessionId,
 					"positionX" : this.myCharacter.position.x,
 					"positionY" : this.myCharacter.position.y,
 					"positionZ" : this.myCharacter.position.z,
-					"animation" : this.myCharacter.charState.constructor.name,
+					"animation" : this.myCharacter.characterAnimationState,
 					"orientationX" : this.myCharacter.orientation.x,
 					"orientationY" : this.myCharacter.orientation.y,
 					"orientationZ" : this.myCharacter.orientation.z,
 				})
 				this.idleState ++;
 				//console.log("idleState:",this.idleState)
-			}else if(this.myCharacter != null && this.myCharacter.charState.constructor.name !='Idle'){
+			}else if(this.myCharacter != null && this.myCharacter.characterAnimationState !='idle'){
 				this.channel.push("naf", { 
 					"sessionId" : this.myCharacter.sessionId,
 					"positionX" : this.myCharacter.position.x,
 					"positionY" : this.myCharacter.position.y,
 					"positionZ" : this.myCharacter.position.z,
-					"animation" : this.myCharacter.charState.constructor.name,
+					"animation" : this.myCharacter.characterAnimationState,
 					"orientationX" : this.myCharacter.orientation.x,
 					"orientationY" : this.myCharacter.orientation.y,
 					"orientationZ" : this.myCharacter.orientation.z,
@@ -1428,7 +1427,6 @@ export class World
 	}
 
 	handleIncomingNAF = data => {
-		//console.log(data)
 		let moveCharacter: Character = this.characterMap.get(data.sessionId)
 		if(moveCharacter){
 			moveCharacter.setPosition(data.positionX, data.positionY, data.positionZ)
