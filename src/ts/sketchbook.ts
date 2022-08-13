@@ -92,6 +92,7 @@ const audioStreamSuccess = (stream) => {
 }
 
 const joinRoom = () => {
+  console.log('joinRoom():', roomName)
   socket.emit('joinRoom', { roomName }, (data) => {
     console.log(`Router RTP Capabilities... ${data.rtpCapabilities}`)
     // we assign to local variable and will be used when
@@ -103,6 +104,7 @@ const joinRoom = () => {
   })
 }
 const getLocalAudioStream = () => {
+  console.log('getLocalAudioStream()')
   navigator.mediaDevices.getUserMedia({
     audio: true,
     // video: {
