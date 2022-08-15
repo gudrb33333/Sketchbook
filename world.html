@@ -5,20 +5,11 @@
 	<title>Sketchbook</title>
 </head>
 
-<body>
-	<button id="btnConnectWebRtc">btnConnectWebRtc</button>
-	<button id="btnEnableMic">btnEnableMic</button>
-	<button id="btnDisableMic">btnDisableMic</button>
-	<button id="btnMuteMic">btnMuteMic</button>
-	<button id="btnUnmuteMic">btnUnmuteMic</button>
-	<button id="btnEnableWebcam">btnEnableWebcam</button>
-	<button id="btnDisableWebcam">btnDisableWebcam</button>
-	<button id="btnEnableShare">btnEnableShare</button>
-	<button id="btnDisableShare">btnDisableShare</button>
-	
-	<audio id="localAudio" autoplay class="audio" muted ></audio>
-	<video id="localWebcam" autoplay class="video" muted ></video>
-	<video id="localShare" autoplay class="video" muted ></video>
+<body>	
+	<audio id="localAudio" autoplay class="audio" style="display: none;" muted ></audio>
+	<video id="localWebcam" class="video" autoplay width="1920" height="1080" style="visibility: hidden; float:left; position: absolute;" muted ></video>
+	<canvas id="localWebcamImage" width="1920" height="1080" style="visibility: hidden; float:left; position: absolute;"></canvas>
+	<video id="localShare" autoplay class="video" style="display: none;" muted ></video>
 	<div id="videoContainer"></div>
 	<!-- <audio id="localAudio" autoplay class="audio" muted ></video>
 	<div id="audioContainer"></div> -->

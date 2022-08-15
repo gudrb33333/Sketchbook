@@ -1,13 +1,24 @@
 /* Left panel */
 
-.left-panel {
-	position: fixed;
-	height: calc(100% - 70px);
+.left-panel.active-on {
+	/* position: fixed; */
+	height: calc(100% - 200px);
 	padding-top: 70px;
 	flex-direction: column;
 	display: flex;
 	justify-content: space-between;
 	pointer-events: none;
+}
+
+.left-panel.active-off {
+	/* position: fixed; */
+	height: calc(100% - 200px);
+	padding-top: 70px;
+	flex-direction: column;
+	display: flex;
+	justify-content: space-between;
+	pointer-events: none;
+	display: none;
 }
 
 .left-panel .panel-segment {
